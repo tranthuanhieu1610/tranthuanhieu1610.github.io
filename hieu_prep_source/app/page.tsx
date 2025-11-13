@@ -26,13 +26,13 @@ export default function Home() {
               Built by students, for students.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/hieu_prep/practice">
+              <Link href="/practice">
                 <Button size="lg" className="w-full sm:w-auto text-lg px-8">
                   Start Practicing
                   <Zap className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="/hieu_prep/tests">
+              <Link href="/tests">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8">
                   Take a Practice Test
                 </Button>
@@ -132,7 +132,7 @@ export default function Home() {
             <p className="text-lg text-muted-foreground mb-8">
               Join thousands of students using HieuPrep to achieve their dream SAT scores.
             </p>
-            <Link href="/hieu_prep/register">
+            <Link href="/register">
               <Button size="lg" className="text-lg px-8">
                 Create Free Account
               </Button>

@@ -21,17 +21,17 @@ export default function Footer() {
             <h4 className="text-sm font-semibold">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/hieu_prep/practice" className="text-muted-foreground hover:text-foreground">
+                <Link href="/practice" className="text-muted-foreground hover:text-foreground">
                   Practice Questions
                 </Link>
               </li>
               <li>
-                <Link href="/hieu_prep/tests" className="text-muted-foreground hover:text-foreground">
+                <Link href="/tests" className="text-muted-foreground hover:text-foreground">
                   Practice Tests
                 </Link>
               </li>
               <li>
-                <Link href="/hieu_prep/progress" className="text-muted-foreground hover:text-foreground">
+                <Link href="/progress" className="text-muted-foreground hover:text-foreground">
                   Track Progress
                 </Link>
               </li>
@@ -43,17 +43,17 @@ export default function Footer() {
             <h4 className="text-sm font-semibold">Resources</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/hieu_prep/about" className="text-muted-foreground hover:text-foreground">
+                <Link href="/about" className="text-muted-foreground hover:text-foreground">
                   About SAT
                 </Link>
               </li>
               <li>
-                <Link href="/hieu_prep/guide" className="text-muted-foreground hover:text-foreground">
+                <Link href="/guide" className="text-muted-foreground hover:text-foreground">
                   Study Guide
                 </Link>
               </li>
               <li>
-                <Link href="/hieu_prep/faq" className="text-muted-foreground hover:text-foreground">
+                <Link href="/faq" className="text-muted-foreground hover:text-foreground">
                   FAQ
                 </Link>
               </li>
