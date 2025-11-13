@@ -1,10 +1,12 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, Users, ClipboardList, TrendingUp } from 'lucide-react';
 
 export default function AdminPage() {
+  const router = useRouter();
   // TODO: Fetch real data from Firestore
   const stats = [
     {
@@ -78,7 +80,10 @@ export default function AdminPage() {
         <div>
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="cursor-pointer hover:border-primary transition-colors">
+            <Card
+              className="cursor-pointer hover:border-primary transition-colors"
+              onClick={() => router.push('/admin/upload')}
+            >
               <CardHeader>
                 <CardTitle className="text-lg">Upload Question</CardTitle>
                 <CardDescription>
@@ -87,7 +92,10 @@ export default function AdminPage() {
               </CardHeader>
             </Card>
 
-            <Card className="cursor-pointer hover:border-primary transition-colors">
+            <Card
+              className="cursor-pointer hover:border-primary transition-colors"
+              onClick={() => router.push('/admin/tests')}
+            >
               <CardHeader>
                 <CardTitle className="text-lg">Create Test</CardTitle>
                 <CardDescription>
@@ -96,7 +104,10 @@ export default function AdminPage() {
               </CardHeader>
             </Card>
 
-            <Card className="cursor-pointer hover:border-primary transition-colors">
+            <Card
+              className="cursor-pointer hover:border-primary transition-colors"
+              onClick={() => router.push('/admin/analytics')}
+            >
               <CardHeader>
                 <CardTitle className="text-lg">View Analytics</CardTitle>
                 <CardDescription>

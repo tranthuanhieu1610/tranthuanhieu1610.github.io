@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,25 +22,66 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Pencil, Trash2, Eye } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2, Eye, Loader2 } from 'lucide-react';
+import { Question } from '@/types/question';
+import { getAllQuestions, deleteQuestion } from '@/lib/questions';
 
 export default function QuestionsPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterDifficulty, setFilterDifficulty] = useState('all');
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
 
-  // TODO: Fetch from Firestore
-  const questions = [
-    {
-      id: '1',
-      type: 'math_calc',
-      difficulty: 'medium',
-      section: 'Module 1',
-      question: 'If 2x + 5 = 15, what is the value of x?',
-      tags: ['algebra', 'equations'],
-      createdAt: '2024-01-15',
-    },
-  ];
+  // Fetch questions from Firestore
+  useEffect(() => {
+    loadQuestions();
+  }, []);
+
+  const loadQuestions = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllQuestions();
+      setQuestions(data);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (questionId: string) => {
+    if (!confirm('Are you sure you want to delete this question?')) {
+      return;
+    }
+
+    try {
+      setDeleteLoading(questionId);
+      await deleteQuestion(questionId);
+      // Reload questions
+      await loadQuestions();
+    } catch (error) {
+      console.error('Error deleting question:', error);
+      alert('Failed to delete question');
+    } finally {
+      setDeleteLoading(null);
+    }
+  };
+
+  // Filter questions
+  const filteredQuestions = questions.filter((q) => {
+    const matchesSearch =
+      searchTerm === '' ||
+      q.content.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      q.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesType = filterType === 'all' || q.type === filterType;
+    const matchesDifficulty = filterDifficulty === 'all' || q.difficulty === filterDifficulty;
+
+    return matchesSearch && matchesType && matchesDifficulty;
+  });
 
   const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
@@ -71,7 +113,7 @@ export default function QuestionsPage() {
               Manage all SAT questions in your database
             </p>
           </div>
-          <Button size="lg">
+          <Button size="lg" onClick={() => router.push('/admin/upload')}>
             <Plus className="mr-2 h-4 w-4" />
             Add Question
           </Button>
@@ -129,22 +171,31 @@ export default function QuestionsPage() {
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle>Questions ({questions.length})</CardTitle>
+              <CardTitle>Questions ({filteredQuestions.length})</CardTitle>
               <div className="text-sm text-muted-foreground">
-                Showing {questions.length} of {questions.length} questions
+                Showing {filteredQuestions.length} of {questions.length} questions
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            {questions.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-4" />
+                <p className="text-muted-foreground">Loading questions...</p>
+              </div>
+            ) : filteredQuestions.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground mb-4">
-                  No questions found. Upload your first question to get started!
+                  {questions.length === 0
+                    ? 'No questions found. Upload your first question to get started!'
+                    : 'No questions match your filters.'}
                 </p>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Upload Question
-                </Button>
+                {questions.length === 0 && (
+                  <Button onClick={() => router.push('/admin/upload')}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Upload Question
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="border rounded-lg">
@@ -161,7 +212,7 @@ export default function QuestionsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {questions.map((question) => (
+                    {filteredQuestions.map((question) => (
                       <TableRow key={question.id}>
                         <TableCell>
                           <Badge className={getTypeColor(question.type)}>
@@ -177,7 +228,7 @@ export default function QuestionsPage() {
                           {question.section}
                         </TableCell>
                         <TableCell className="max-w-md truncate">
-                          {question.question}
+                          {question.content.question}
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-1 flex-wrap">
@@ -188,19 +239,30 @@ export default function QuestionsPage() {
                             ))}
                           </div>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {question.createdAt}
+                        <TableCell className="text-muted-foreground text-sm">
+                          {question.createdAt.toLocaleDateString()}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" title="View">
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" title="Edit">
                               <Pencil className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" className="text-red-600">
-                              <Trash2 className="h-4 w-4" />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => handleDelete(question.id)}
+                              disabled={deleteLoading === question.id}
+                              title="Delete"
+                            >
+                              {deleteLoading === question.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-4 w-4" />
+                              )}
                             </Button>
                           </div>
                         </TableCell>
