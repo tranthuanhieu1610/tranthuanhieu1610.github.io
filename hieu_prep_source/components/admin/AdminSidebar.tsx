@@ -49,7 +49,7 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] border-r bg-background">
+    <aside className="fixed top-16 left-0 z-30 w-64 h-[calc(100vh-4rem)] border-r bg-background">
       <div className="flex flex-col h-full">
         <div className="p-4 border-b">
           <h2 className="text-lg font-semibold text-primary">Admin Portal</h2>

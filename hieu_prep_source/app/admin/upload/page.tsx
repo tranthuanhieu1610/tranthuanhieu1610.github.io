@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,8 +20,10 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Upload, Eye, Save, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { QuestionType, DifficultyLevel } from '@/types/question';
+import { createQuestion } from '@/lib/questions';
 
 export default function UploadQuestionPage() {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     type: '' as QuestionType | '',
     section: '',
@@ -49,28 +52,68 @@ export default function UploadQuestionPage() {
     setSuccess(false);
 
     try {
-      // TODO: Implement Firestore upload
-      // For now, just simulate upload
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (!user) {
+        throw new Error('You must be logged in to upload questions');
+      }
+
+      if (!formData.type || !formData.difficulty) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      // Parse tags from comma-separated string
+      const tagsArray = formData.tags
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
+
+      // Create question content object
+      const content = {
+        passage: formData.passage || undefined,
+        question: formData.question,
+        options: [
+          { id: 'A', text: formData.optionA },
+          { id: 'B', text: formData.optionB },
+          { id: 'C', text: formData.optionC },
+          { id: 'D', text: formData.optionD },
+        ],
+        correctAnswer: formData.correctAnswer,
+        explanation: formData.explanation,
+      };
+
+      // Upload to Firestore
+      await createQuestion({
+        type: formData.type as QuestionType,
+        section: formData.section,
+        difficulty: formData.difficulty as DifficultyLevel,
+        content,
+        tags: tagsArray,
+        source: formData.source,
+        desmosRequired: formData.desmosRequired,
+        createdBy: user.id,
+      });
 
       setSuccess(true);
-      // Reset form
-      setFormData({
-        type: '',
-        section: '',
-        difficulty: '',
-        passage: '',
-        question: '',
-        optionA: '',
-        optionB: '',
-        optionC: '',
-        optionD: '',
-        correctAnswer: '',
-        explanation: '',
-        tags: '',
-        source: '',
-        desmosRequired: false,
-      });
+
+      // Reset form after 2 seconds
+      setTimeout(() => {
+        setFormData({
+          type: '',
+          section: '',
+          difficulty: '',
+          passage: '',
+          question: '',
+          optionA: '',
+          optionB: '',
+          optionC: '',
+          optionD: '',
+          correctAnswer: '',
+          explanation: '',
+          tags: '',
+          source: '',
+          desmosRequired: false,
+        });
+        setSuccess(false);
+      }, 2000);
     } catch (err: any) {
       setError(err.message || 'Failed to upload question');
     } finally {
