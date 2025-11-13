@@ -188,7 +188,7 @@ export default function PracticePage() {
                   <Card
                     key={question.id}
                     className="cursor-pointer hover:border-primary transition-all hover:shadow-md"
-                    onClick={() => router.push(`/practice/${question.id}`)}
+                    onClick={() => router.push(`/practice/question?id=${question.id}`)}
                   >
                     <CardHeader>
                       <div className="flex gap-2 mb-2">
