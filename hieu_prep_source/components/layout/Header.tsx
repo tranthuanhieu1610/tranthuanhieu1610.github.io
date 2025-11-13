@@ -1,15 +1,41 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { BookOpen, BarChart3, User, LogOut } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { BookOpen, BarChart3, User, LogOut, Settings, Shield } from 'lucide-react';
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, signOut, loading } = useAuth();
 
   const isActive = (path: string) => {
     return pathname === path ? 'text-primary font-semibold' : 'text-muted-foreground hover:text-foreground';
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/');
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
@@ -35,16 +61,65 @@ export default function Header() {
             <BarChart3 className="inline h-4 w-4 mr-1" />
             Progress
           </Link>
+          {user?.role === 'admin' && (
+            <Link href="/admin" className={isActive('/admin')}>
+              <Shield className="inline h-4 w-4 mr-1" />
+              Admin
+            </Link>
+          )}
         </nav>
 
         {/* User Actions */}
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon">
-            <User className="h-5 w-5" />
-          </Button>
-          <Button variant="outline" size="sm">
-            Sign In
-          </Button>
+          {loading ? (
+            <Button variant="ghost" size="sm" disabled>
+              Loading...
+            </Button>
+          ) : user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {getInitials(user.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <p className="text-xs text-primary font-medium capitalize">{user.role}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.push('/profile')}>
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/settings')}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" onClick={() => router.push('/auth/login')}>
+                Sign In
+              </Button>
+              <Button variant="default" size="sm" onClick={() => router.push('/auth/register')}>
+                Get Started
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>
