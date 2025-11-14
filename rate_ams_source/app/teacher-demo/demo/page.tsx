@@ -2,36 +2,73 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getTeacherById, getReviewsForTeacher } from "@/lib/firebase-utils";
-import { formatDate, getRatingBgColor } from "@/lib/utils";
-import type { Teacher, Review } from "@/lib/types";
+import { formatDate } from "@/lib/utils";
+
+// For static export demo, we'll use mock data
+const mockTeacher = {
+  id: "demo",
+  name: "Nguyễn Văn Anh",
+  subject: "Mathematics",
+  department: "Mathematics",
+  avgRating: 4.5,
+  avgDifficulty: 3.8,
+  wouldTakeAgain: 85,
+  totalReviews: 12,
+  createdAt: new Date(),
+};
+
+const mockReviews = [
+  {
+    id: "1",
+    teacherId: "demo",
+    rating: 5.0,
+    difficulty: 4.0,
+    wouldTakeAgain: true,
+    course: "Advanced Mathematics 11A",
+    tags: ["Engaging", "Clear explanations", "Helpful"],
+    comment: "Great teacher! Makes complex topics easy to understand. Always willing to help students outside of class.",
+    timestamp: new Date("2024-11-10"),
+  },
+  {
+    id: "2",
+    teacherId: "demo",
+    rating: 4.0,
+    difficulty: 3.5,
+    wouldTakeAgain: true,
+    course: "Calculus 12B",
+    tags: ["Gives lots of homework", "Tough grader", "Clear explanations"],
+    comment: "Challenging but fair. Homework can be a lot, but it really helps you understand the material.",
+    timestamp: new Date("2024-11-08"),
+  },
+  {
+    id: "3",
+    teacherId: "demo",
+    rating: 4.5,
+    difficulty: 4.0,
+    wouldTakeAgain: true,
+    course: "Geometry 10A",
+    tags: ["Amazing lectures", "Participation matters"],
+    comment: "One of the best math teachers at our school. Really cares about students learning.",
+    timestamp: new Date("2024-11-05"),
+  },
+];
+
+// Required for static export
 
 export default function TeacherProfile() {
-  const params = useParams();
-  const teacherId = params.id as string;
+  
+  const teacherId = "demo";
 
-  const [teacher, setTeacher] = useState<Teacher | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [teacher] = useState(mockTeacher);
+  const [reviews] = useState(mockReviews);
+  const [loading] = useState(false);
 
-  useEffect(() => {
-    loadTeacherData();
-  }, [teacherId]);
-
-  const loadTeacherData = async () => {
-    try {
-      setLoading(true);
-      const [teacherData, reviewsData] = await Promise.all([
-        getTeacherById(teacherId),
-        getReviewsForTeacher(teacherId),
-      ]);
-      setTeacher(teacherData);
-      setReviews(reviewsData);
-    } catch (error) {
-      console.error("Error loading teacher data:", error);
-    } finally {
-      setLoading(false);
-    }
+  const getRatingBgColor = (rating: number) => {
+    if (rating >= 4.0) return "bg-[#4CAF50]";
+    if (rating >= 3.5) return "bg-[#8BC34A]";
+    if (rating >= 2.5) return "bg-[#FFC107]";
+    if (rating >= 2.0) return "bg-[#FF9800]";
+    return "bg-[#F44336]";
   };
 
   if (loading) {
@@ -130,32 +167,18 @@ export default function TeacherProfile() {
           Student Reviews ({reviews.length})
         </h2>
 
-        {reviews.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <p className="text-gray-600 text-lg mb-4">
-              No reviews yet. Be the first to review!
-            </p>
-            <a
-              href={`/rate-ams-teacher/submit-review?teacher=${teacherId}`}
-              className="text-[#4CAF50] hover:underline font-medium"
-            >
-              Write a Review
-            </a>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {reviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
-            ))}
-          </div>
-        )}
+        <div className="space-y-6">
+          {reviews.map((review) => (
+            <ReviewCard key={review.id} review={review} />
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
 // Review Card Component
-function ReviewCard({ review }: { review: Review }) {
+function ReviewCard({ review }: { review: typeof mockReviews[0] }) {
   const getRatingColor = (rating: number) => {
     if (rating >= 4.0) return "bg-[#4CAF50]";
     if (rating >= 3.5) return "bg-[#8BC34A]";

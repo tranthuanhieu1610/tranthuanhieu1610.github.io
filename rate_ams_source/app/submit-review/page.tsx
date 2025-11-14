@@ -1,24 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { getAllTeachers, submitReview } from "@/lib/firebase-utils";
+import { useState } from "react";
 import { REVIEW_TAGS } from "@/lib/types";
-import type { Teacher, ReviewFormData } from "@/lib/types";
+import type { ReviewFormData } from "@/lib/types";
+
+// Mock teachers for demo
+const mockTeachers = [
+  { id: "1", name: "Nguyễn Văn Anh", subject: "Mathematics" },
+  { id: "2", name: "Trần Thị Bích", subject: "Physics" },
+  { id: "3", name: "Lê Minh Châu", subject: "Chemistry" },
+  { id: "4", name: "Phạm Hoàng Dũng", subject: "Biology" },
+];
 
 export default function SubmitReview() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const preselectedTeacherId = searchParams.get("teacher");
-
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState<ReviewFormData>({
-    teacherId: preselectedTeacherId || "",
+    teacherId: "",
     rating: 0,
     difficulty: 0,
     wouldTakeAgain: false,
@@ -26,23 +26,6 @@ export default function SubmitReview() {
     tags: [],
     comment: "",
   });
-
-  useEffect(() => {
-    loadTeachers();
-  }, []);
-
-  const loadTeachers = async () => {
-    try {
-      setLoading(true);
-      const data = await getAllTeachers();
-      setTeachers(data);
-    } catch (error) {
-      console.error("Error loading teachers:", error);
-      setError("Failed to load teachers. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,21 +57,12 @@ export default function SubmitReview() {
       return;
     }
 
-    try {
-      setSubmitting(true);
-      await submitReview(formData);
+    // Simulate submission
+    setSubmitting(true);
+    setTimeout(() => {
       setSuccess(true);
-
-      // Redirect to teacher page after 2 seconds
-      setTimeout(() => {
-        router.push(`/rate-ams-teacher/teacher/${formData.teacherId}`);
-      }, 2000);
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      setError("Failed to submit review. Please try again.");
-    } finally {
       setSubmitting(false);
-    }
+    }, 1000);
   };
 
   const toggleTag = (tag: string) => {
@@ -100,15 +74,6 @@ export default function SubmitReview() {
     }));
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#4CAF50]"></div>
-        <p className="mt-4 text-gray-600">Loading...</p>
-      </div>
-    );
-  }
-
   if (success) {
     return (
       <div className="container mx-auto px-4 py-12">
@@ -118,8 +83,14 @@ export default function SubmitReview() {
             Review Submitted!
           </h2>
           <p className="text-gray-600 mb-6">
-            Thank you for your feedback. Redirecting to teacher profile...
+            Thank you for your feedback!
           </p>
+          <a
+            href="/rate-ams-teacher"
+            className="inline-block bg-[#4CAF50] text-white px-6 py-2 rounded-lg hover:bg-[#45a049]"
+          >
+            Back to Home
+          </a>
         </div>
       </div>
     );
@@ -154,7 +125,7 @@ export default function SubmitReview() {
               required
             >
               <option value="">Choose a teacher...</option>
-              {teachers.map((teacher) => (
+              {mockTeachers.map((teacher) => (
                 <option key={teacher.id} value={teacher.id}>
                   {teacher.name} - {teacher.subject}
                 </option>
@@ -313,7 +284,7 @@ export default function SubmitReview() {
             </button>
             <a
               href="/rate-ams-teacher"
-              className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center"
             >
               Cancel
             </a>
