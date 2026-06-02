@@ -45,6 +45,17 @@ chips.forEach(chip => {
     });
 });
 
+// ===== Whole article card opens the source article =====
+document.querySelectorAll('.article-card').forEach(card => {
+    const link = card.querySelector('a.article-link');
+    if (!link) return;
+    card.addEventListener('click', (e) => {
+        // Let real links (and their children) behave normally
+        if (e.target.closest('a')) return;
+        window.open(link.href, '_blank', 'noopener');
+    });
+});
+
 // ===== Interview Q&A accordion =====
 document.querySelectorAll('.qa-q').forEach(btn => {
     btn.addEventListener('click', () => {
