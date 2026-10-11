@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>projects | Thuan Hieu Tran</title>
+  <meta name="author" content="Thuan Hieu Tran">
+  <meta name="description" content="Projects by Thuan Hieu Tran.">
+  <link rel="icon" href="/assets/img/prof_pic.jpg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+  <header>
+    <nav class="navbar" role="navigation">
+      <div class="container">
+        <a class="navbar-brand" href="/"><span class="font-weight-bold">Thuan Hieu</span> Tran</a>
+        <button class="nav-toggler" type="button" aria-label="Toggle navigation" aria-expanded="false">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </button>
+        <ul class="nav-menu">
+        <li class="nav-item"><a class="nav-link" href="/">about</a></li>
+        <li class="nav-item"><a class="nav-link" href="/publications/">publications</a></li>
+        <li class="nav-item active"><a class="nav-link" href="/projects/">projects</a></li>
+        <li class="nav-item"><a class="nav-link" href="/cv/">cv</a></li>
+          <li>
+            <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme">
+              <i class="fa-solid fa-circle-half-stroke" id="light-toggle-system"></i>
+              <i class="fa-solid fa-sun" id="light-toggle-light"></i>
+              <i class="fa-solid fa-moon" id="light-toggle-dark"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main class="container" role="main">
+    <div class="post">
+      <header class="post-header">
+        <h1 class="post-title">projects</h1>
+        <p class="post-description">Things I have built, mostly around sign language and competitive programming.</p>
+      </header>
+      <article>
+        <div class="projects-grid">
+        <a class="card" href="/LittleHands/">
+          <img src="/assets/img/littlehands.jpg" alt="LittleHands" loading="lazy">
+          <div class="card-body">
+            <h3 class="card-title">LittleHands</h3>
+            <p class="card-meta">Co-Creator &amp; Lead Developer &middot; 2024&ndash;present</p>
+            <p class="card-text">A smartphone app that translates Vietnamese Sign Language to and from text for deaf and hard-of-hearing users. I trained the sign recognition models and built the FastAPI + PostgreSQL backend and C# client.</p>
+          </div>
+        </a>
+        <a class="card" href="https://github.com/Etdihatthoc/Multi-VSL_WACV_2025" target="_blank" rel="noopener">
+          <img src="/assets/img/multivsl.jpg" alt="Multi-VSL" loading="lazy">
+          <div class="card-body">
+            <h3 class="card-title">Multi-VSL</h3>
+            <p class="card-meta">WACV 2025 &middot; dataset</p>
+            <p class="card-text">A multi-view Vietnamese Sign Language dataset with 84K+ videos, 1,000 glosses and 30 signers. I set up the 3-camera recording studio, built the annotation platform and benchmarked video models across views.</p>
+          </div>
+        </a>
+        <a class="card" href="https://hnoj.edu.vn/" target="_blank" rel="noopener">
+          <div class="card-body">
+            <h3 class="card-title">HNOJ</h3>
+            <p class="card-meta">Co-developer &middot; online judge</p>
+            <p class="card-text">An online judge for Hanoi's competitive programming community, where I also set problems for contests I organized.</p>
+          </div>
+        </a>
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Bottleneck-Migration Alpha</h3>
+            <p class="card-meta">Personal project &middot; 2026</p>
+            <p class="card-text">A market-neutral long/short sector-rotation strategy on the AI hardware supply chain, with price-based regime detection, beta hedging and volatility targeting.</p>
+          </div>
+        </div>
+        </div>
+      </article>
+    </div>
+  </main>
+  <footer role="contentinfo">
+    <div class="container">
+      &copy; Copyright 2026 Thuan Hieu Tran. Design based on the <a href="https://github.com/alshedivat/al-folio" target="_blank" rel="noopener">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a>. Last updated: October 11, 2026.
+    </div>
+  </footer>
+</body>
+</html>
